@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Briefcase, MapPin, Clock, Zap, Heart, Search, Filter,
   ExternalLink, Building2, IndianRupee, Star, Bookmark,
-  BookmarkCheck, ChevronDown, Sparkles, ArrowUpRight, X
+  BookmarkCheck, ChevronDown, Sparkles, ArrowUpRight, X, CheckCircle2
 } from "lucide-react";
 
 interface Internship {
@@ -79,6 +79,8 @@ export default function MatchesPage() {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("All");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [isApplying, setIsApplying] = useState(false);
+  const [applicationStatus, setApplicationStatus] = useState<"idle" | "submitting" | "success">("idle");
 
   const filtered = useMemo(() => {
     let list = internships;
@@ -97,6 +99,18 @@ export default function MatchesPage() {
       next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
+  };
+
+  const handleApply = async () => {
+    setApplicationStatus("submitting");
+    // Simulate network request
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setApplicationStatus("success");
+    setTimeout(() => {
+      setSelectedId(null);
+      setIsApplying(false);
+      setApplicationStatus("idle");
+    }, 2000);
   };
 
   const selected = internships.find(i => i.id === selectedId);
@@ -256,7 +270,7 @@ export default function MatchesPage() {
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
-            onClick={() => setSelectedId(null)}
+            onClick={() => { setSelectedId(null); setIsApplying(false); setApplicationStatus("idle"); }}
           >
             <motion.div
               initial={{ scale: 0.9, rotateX: 10 }} animate={{ scale: 1, rotateX: 0 }} exit={{ scale: 0.9 }}
@@ -267,7 +281,7 @@ export default function MatchesPage() {
               <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full blur-[100px]"
                 style={{ backgroundColor: getMatchColor(selected.match) + "20" }}
               />
-              <button onClick={() => setSelectedId(null)} className="absolute top-4 right-4 p-2 rounded-lg hover:bg-white/10">
+              <button onClick={() => { setSelectedId(null); setIsApplying(false); setApplicationStatus("idle"); }} className="absolute top-4 right-4 p-2 rounded-lg hover:bg-white/10 z-20">
                 <X className="w-5 h-5 text-white/40" />
               </button>
 
@@ -281,46 +295,84 @@ export default function MatchesPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 mb-6">
-                <div className="px-4 py-2 rounded-xl font-black text-lg"
-                  style={{ backgroundColor: getMatchColor(selected.match) + "15", color: getMatchColor(selected.match) }}
-                >
-                  {selected.match}% Match
+              {!isApplying ? (
+                <>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="px-4 py-2 rounded-xl font-black text-lg"
+                      style={{ backgroundColor: getMatchColor(selected.match) + "15", color: getMatchColor(selected.match) }}
+                    >
+                      {selected.match}% Match
+                    </div>
+                    <span className="px-3 py-1.5 rounded-lg bg-white/5 text-xs font-bold text-white/50">{selected.type}</span>
+                    <span className="px-3 py-1.5 rounded-lg bg-white/5 text-xs font-bold text-white/50">{selected.stipend}</span>
+                  </div>
+
+                  <p className="text-sm text-white/60 mb-6 leading-relaxed">{selected.description}</p>
+
+                  <div className="mb-6">
+                    <h4 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-3">Required Skills</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selected.skills.map(s => (
+                        <span key={s} className="px-3 py-1.5 rounded-lg bg-rcb-red/10 text-xs font-bold text-rcb-red border border-rcb-red/20">{s}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mb-8">
+                    <h4 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-3">Perks</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selected.perks.map(p => (
+                        <span key={p} className="px-3 py-1.5 rounded-lg bg-green-500/10 text-xs font-bold text-green-400 border border-green-500/20">{p}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button 
+                      onClick={() => setIsApplying(true)}
+                      className="flex-1 py-3.5 rounded-xl bg-rcb-red text-white font-black text-sm shadow-[0_0_30px_rgba(238,28,37,0.3)] hover:shadow-[0_0_50px_rgba(238,28,37,0.5)] transition-all flex items-center justify-center gap-2">
+                      Apply Now <ArrowUpRight className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => toggleSave(selected.id)}
+                      className="px-6 py-3.5 rounded-xl glass border-white/10 font-bold text-sm hover:bg-white/10 transition-all"
+                    >
+                      {saved.has(selected.id) ? "Saved ✓" : "Save"}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="space-y-4">
+                  {applicationStatus === "success" ? (
+                    <div className="flex flex-col items-center justify-center py-10 space-y-4">
+                      <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center">
+                        <CheckCircle2 className="w-8 h-8 text-green-500" />
+                      </div>
+                      <h3 className="text-xl font-black text-white">Application Sent!</h3>
+                      <p className="text-sm text-white/50 text-center">Your profile and resume have been securely shared with {selected.company}.</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <label className="text-xs font-bold text-white/50 uppercase tracking-wider mb-2 block">Resume Link (Optional)</label>
+                        <input type="text" placeholder="https://your-portfolio.com" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white placeholder:text-white/20 focus:outline-none focus:border-rcb-red/50 text-sm" />
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-white/50 uppercase tracking-wider mb-2 block">Why should we hire you?</label>
+                        <textarea rows={4} placeholder="I am a great fit because..." className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white placeholder:text-white/20 focus:outline-none focus:border-rcb-red/50 text-sm resize-none" />
+                      </div>
+                      <div className="pt-2">
+                        <button 
+                          onClick={handleApply}
+                          disabled={applicationStatus === "submitting"}
+                          className="w-full py-3.5 rounded-xl bg-rcb-red text-white font-black text-sm shadow-[0_0_30px_rgba(238,28,37,0.3)] hover:shadow-[0_0_50px_rgba(238,28,37,0.5)] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                          {applicationStatus === "submitting" ? "Submitting..." : "Submit Application"}
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
-                <span className="px-3 py-1.5 rounded-lg bg-white/5 text-xs font-bold text-white/50">{selected.type}</span>
-                <span className="px-3 py-1.5 rounded-lg bg-white/5 text-xs font-bold text-white/50">{selected.stipend}</span>
-              </div>
-
-              <p className="text-sm text-white/60 mb-6 leading-relaxed">{selected.description}</p>
-
-              <div className="mb-6">
-                <h4 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-3">Required Skills</h4>
-                <div className="flex flex-wrap gap-2">
-                  {selected.skills.map(s => (
-                    <span key={s} className="px-3 py-1.5 rounded-lg bg-rcb-red/10 text-xs font-bold text-rcb-red border border-rcb-red/20">{s}</span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mb-8">
-                <h4 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-3">Perks</h4>
-                <div className="flex flex-wrap gap-2">
-                  {selected.perks.map(p => (
-                    <span key={p} className="px-3 py-1.5 rounded-lg bg-green-500/10 text-xs font-bold text-green-400 border border-green-500/20">{p}</span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex gap-3">
-                <button className="flex-1 py-3.5 rounded-xl bg-rcb-red text-white font-black text-sm shadow-[0_0_30px_rgba(238,28,37,0.3)] hover:shadow-[0_0_50px_rgba(238,28,37,0.5)] transition-all flex items-center justify-center gap-2">
-                  Apply Now <ArrowUpRight className="w-4 h-4" />
-                </button>
-                <button onClick={() => toggleSave(selected.id)}
-                  className="px-6 py-3.5 rounded-xl glass border-white/10 font-bold text-sm hover:bg-white/10 transition-all"
-                >
-                  {saved.has(selected.id) ? "Saved ✓" : "Save"}
-                </button>
-              </div>
+              )}
             </motion.div>
           </motion.div>
         )}
