@@ -101,7 +101,7 @@ export default function AnalyzerPage() {
             Resume <span className="text-rcb-red">Analyzer</span>
           </motion.h1>
           <p className="text-sm text-white/40 mt-2">
-            Hey {user?.displayName?.split(" ")[0] || "there"}, let's optimize your resume for maximum impact.
+            Hey {user?.displayName?.split(" ")[0] || user?.email?.split("@")[0] || "there"}, let's optimize your resume for maximum impact.
           </p>
 
         </div>

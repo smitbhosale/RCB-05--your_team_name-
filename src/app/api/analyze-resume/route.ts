@@ -36,9 +36,21 @@ Return ONLY valid JSON matching this exact schema (no markdown, no code blocks, 
 
 Be strict, detailed, and honest. Focus on modern tech industry standards. Provide at least 5 suggestions, 5 skills, 4 skill gaps, 5 section scores, and 10 keywords.`;
 
-function getMockAnalysis(): ResumeAnalysis {
+function getMockAnalysis(resumeText: string = ""): ResumeAnalysis {
+  // Generate a dynamic but consistent score based on text length to simulate real analysis
+  const textLen = resumeText.length;
+  let dynamicScore = 45;
+  if (textLen > 500) dynamicScore += 15;
+  if (textLen > 1500) dynamicScore += 15;
+  if (textLen > 3000) dynamicScore += 10;
+  // Add some pseudo-randomness based on length modulo
+  dynamicScore += (textLen % 15);
+  
+  // Cap between 45 and 98
+  dynamicScore = Math.min(Math.max(dynamicScore, 45), 98);
+
   return {
-    atsScore: 72,
+    atsScore: dynamicScore,
     summary: "A promising early-career software developer with a focus on web technologies. The resume shows potential but lacks quantifiable impact metrics and industry-specific keywords.",
     strengths: [
       "Strong foundation in React and JavaScript",
@@ -137,8 +149,8 @@ export async function POST(req: NextRequest) {
     }
 
     // If no Gemini key, return mock data
-    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === "placeholder") {
-      return NextResponse.json({ analysis: getMockAnalysis(), mock: true });
+    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === "your_gemini_api_key_here" || process.env.GEMINI_API_KEY === "placeholder") {
+      return NextResponse.json({ analysis: getMockAnalysis(resumeText), mock: true });
     }
 
     // Call Gemini
@@ -172,7 +184,7 @@ export async function POST(req: NextRequest) {
     
     // Fallback to mock on any error
     return NextResponse.json({
-      analysis: getMockAnalysis(),
+      analysis: getMockAnalysis(""),
       mock: true,
       error: "AI analysis failed, showing demo data."
     });

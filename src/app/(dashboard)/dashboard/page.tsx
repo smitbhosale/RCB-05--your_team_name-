@@ -10,7 +10,7 @@ import { Tilt3D } from "@/components/ui/Tilt3D";
 import { GlowButton } from "@/components/ui/GlowButton";
 import { StudentInsights } from "@/components/dashboard/StudentInsights";
 import Link from "next/link";
-
+import { useAuth } from "@/context/AuthContext";
 
 const stagger: any = {
   hidden: { opacity: 0 },
@@ -22,6 +22,16 @@ const fadeUp: any = {
 };
 
 export default function DashboardPage() {
+  const { user } = useAuth();
+  
+  const getFirstName = () => {
+    if (user?.displayName) return user.displayName.split(" ")[0].toUpperCase();
+    if (user?.email) return user.email.split("@")[0].toUpperCase();
+    return "HUSTLER";
+  };
+  
+  const firstName = getFirstName();
+
   return (
     <motion.div
       variants={stagger}
@@ -44,7 +54,7 @@ export default function DashboardPage() {
                 <span className="text-[9px] sm:text-xs font-black tracking-[0.2em] uppercase">Priority Intelligence</span>
               </div>
               <h2 className="text-xl sm:text-2xl md:text-3xl font-black mb-3 sm:mb-4 tracking-tighter leading-tight">
-                ARYAN, YOU ARE IN THE <span className="text-rcb-red">TOP 2%</span>{" "}
+                {firstName}, YOU ARE IN THE <span className="text-rcb-red">TOP 2%</span>{" "}
                 <br className="hidden md:block" />
                 OF APPLICANTS FOR GOOGLE SDE INTERN.
               </h2>

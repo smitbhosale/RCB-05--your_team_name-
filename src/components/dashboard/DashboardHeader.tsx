@@ -8,6 +8,21 @@ import { useAuth } from "@/context/AuthContext";
 export const DashboardHeader = () => {
   const { user } = useAuth();
 
+  const currentHour = new Date().getHours();
+  let greeting = "Good evening";
+  if (currentHour < 12) greeting = "Good morning";
+  else if (currentHour < 17) greeting = "Good afternoon";
+
+  const getDisplayName = () => {
+    if (user?.displayName) return user.displayName;
+    if (user?.email) {
+      const emailName = user.email.split('@')[0];
+      return emailName.charAt(0).toUpperCase() + emailName.slice(1);
+    }
+    return "User";
+  };
+  const displayName = getDisplayName();
+
   return (
     <header
       className="h-16 sm:h-20 border-b border-white/5 flex items-center justify-between px-4 sm:px-6 md:px-8 sticky top-0 bg-[#030303]/80 backdrop-blur-xl z-30"
@@ -46,7 +61,7 @@ export const DashboardHeader = () => {
 
         <div className="flex items-center gap-3 pl-3 sm:pl-6 border-l border-white/10">
           <div className="text-right hidden sm:block">
-            <p className="text-xs font-bold text-white">{user?.displayName || "User"}</p>
+            <p className="text-xs font-bold text-white">{greeting}, {displayName}</p>
             <p className="text-[10px] text-white/40">Active Session</p>
           </div>
           <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl glass border-white/10 flex items-center justify-center overflow-hidden">

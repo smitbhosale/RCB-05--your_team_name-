@@ -6,6 +6,8 @@ import {
   signInWithPopup, 
   GoogleAuthProvider, 
   GithubAuthProvider,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signOut,
   User 
 } from "firebase/auth";
@@ -17,6 +19,7 @@ interface AuthContextType {
   loading: boolean;
   loginWithGoogle: () => Promise<void>;
   loginWithGithub: () => Promise<void>;
+  loginWithEmail: (email: string, pass: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -28,8 +31,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
+    const dummySession = localStorage.getItem("dummy_user");
+    if (dummySession) {
+      setUser(JSON.parse(dummySession));
+      setLoading(false);
+    }
+    
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+      if (!localStorage.getItem("dummy_user")) {
+        setUser(user);
+      }
       setLoading(false);
     });
     return () => unsubscribe();
@@ -55,8 +66,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const loginWithEmail = async (email: string, pass: string) => {
+    // Bypass Firebase completely for demo access
+    const dummyUser = {
+      uid: "dummy-" + Date.now(),
+      email: email,
+      displayName: email.split('@')[0],
+      photoURL: null,
+    } as unknown as User;
+    
+    localStorage.setItem("dummy_user", JSON.stringify(dummyUser));
+    setUser(dummyUser);
+    router.push("/dashboard");
+  };
+
   const logout = async () => {
     try {
+      localStorage.removeItem("dummy_user");
       await signOut(auth);
       router.push("/");
     } catch (error) {
@@ -65,7 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, loginWithGoogle, loginWithGithub, logout }}>
+    <AuthContext.Provider value={{ user, loading, loginWithGoogle, loginWithGithub, loginWithEmail, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -4,12 +4,14 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { Bot, Cpu, GitBranch, Globe, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const { user, loginWithGoogle, loginWithGithub } = useAuth();
+  const { user, loginWithGoogle, loginWithGithub, loginWithEmail } = useAuth();
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -44,6 +46,41 @@ export default function LoginPage() {
         </div>
 
         <div className="glass rounded-3xl p-8 border border-white/10 space-y-4">
+          <form onSubmit={(e) => { e.preventDefault(); loginWithEmail(email, password); }} className="space-y-4">
+            <div>
+              <input
+                type="email"
+                placeholder="Email address"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-rcb-red transition-all"
+              />
+            </div>
+            <div>
+              <input
+                type="password"
+                placeholder="Password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-rcb-red transition-all"
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full py-4 rounded-2xl bg-rcb-red text-white font-bold flex items-center justify-center gap-3 hover:bg-red-600 transition-all active:scale-[0.98]"
+            >
+              Access System
+            </button>
+          </form>
+
+          <div className="flex items-center gap-4 py-2 opacity-50">
+            <div className="flex-1 h-px bg-white/20"></div>
+            <span className="text-xs">OR</span>
+            <div className="flex-1 h-px bg-white/20"></div>
+          </div>
+
           <button
             onClick={loginWithGoogle}
             className="w-full py-4 rounded-2xl bg-white text-black font-bold flex items-center justify-center gap-3 hover:bg-white/90 transition-all active:scale-[0.98]"

@@ -232,7 +232,7 @@ export default function RebuilderPage() {
             {/* Header */}
             <div className="text-center border-b-2 border-gray-900 pb-4 mb-6">
               <h1 className="text-3xl font-black uppercase tracking-tight text-gray-900 mb-2">
-                {resume?.personalInfo.name || user?.displayName || "John Doe"}
+                {user?.displayName || user?.email?.split("@")[0] || resume?.personalInfo.name || "John Doe"}
               </h1>
               <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-1 text-sm text-gray-600 font-medium">
                 {resume?.personalInfo.email && <span>{resume.personalInfo.email}</span>}
