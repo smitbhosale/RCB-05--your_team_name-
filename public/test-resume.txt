@@ -1,0 +1,47 @@
+Aryan Sharma
+aryan.sharma@email.com | +91 9876543210 | Bangalore, India
+LinkedIn: linkedin.com/in/aryansharma | GitHub: github.com/aryansharma
+
+EDUCATION
+B.Tech in Computer Science, RCB Institute of Technology (2022-2026)
+CGPA: 8.5/10
+
+WORK EXPERIENCE
+Software Development Intern | TechStartup Pvt. Ltd. | Jun 2025 - Aug 2025
+- Developed frontend features using React.js and Tailwind CSS
+- Built RESTful API endpoints using Node.js and Express
+- Collaborated with the design team to implement responsive UI components
+- Participated in agile sprints and daily standups
+
+Campus Tech Lead | Google Developer Student Clubs | Aug 2024 - Present
+- Organized workshops on cloud computing and web development
+- Mentored 50+ students in their coding journey
+- Led a team of 10 developers for hackathon projects
+
+PROJECTS
+CareerOS - AI Career Platform
+- Built with Next.js 15, TypeScript, and Firebase
+- Integrated Gemini API for resume analysis and career recommendations
+- Implemented real-time dashboard with Framer Motion animations
+
+E-Commerce Dashboard
+- Full-stack application using React, Node.js, and MongoDB
+- Implemented authentication with JWT tokens
+- Created analytics dashboard with Chart.js
+
+SKILLS
+Programming: JavaScript, TypeScript, Python, Java, C++
+Frontend: React.js, Next.js, HTML, CSS, Tailwind CSS
+Backend: Node.js, Express.js, FastAPI
+Database: MongoDB, PostgreSQL, Firebase
+Tools: Git, Docker, VS Code, Postman
+
+CERTIFICATIONS
+- Google Cloud Associate Cloud Engineer
+- AWS Cloud Practitioner
+- Meta Frontend Developer Professional Certificate
+
+ACHIEVEMENTS
+- Winner, Smart India Hackathon 2025
+- Top 5%, Google Code Jam 2024
+- Published research paper on AI in Education at IEEE Conference
